@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  enterprise-api:
+    build:
+      context: ../..
+      dockerfile: enterprise_app/deploy/Dockerfile
+    container_name: enterprise-api
+    ports:
+      - "8020:8020"
+    environment:
+      ENTERPRISE_DATABASE_URL: postgresql://enterprise:enterprise@enterprise-postgres:5432/enterprise_db
+      ENTERPRISE_JWT_SECRET_KEY: change-me-for-prod
+      ENTERPRISE_BOOTSTRAP_ADMIN_PASSWORD: ChangeMe123!
+      ENTERPRISE_GATEWAY_RATE_LIMIT_PER_MINUTE: 300
+    depends_on:
+      - enterprise-postgres
+      - enterprise-redis
+
+  enterprise-postgres:
+    image: postgres:16
+    container_name: enterprise-postgres
+    environment:
+      POSTGRES_USER: enterprise
+      POSTGRES_PASSWORD: enterprise
+      POSTGRES_DB: enterprise_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - enterprise_postgres_data:/var/lib/postgresql/data
+
+  enterprise-redis:
+    image: redis:7
+    container_name: enterprise-redis
+    ports:
+      - "6380:6379"
+
+volumes:
+  enterprise_postgres_data:
+
