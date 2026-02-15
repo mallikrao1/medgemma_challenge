@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedGemma Discharge Copilot</title>
+    <link rel="stylesheet" href="/demo-assets/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel panel-input">
+        <h1>MedGemma Discharge Copilot</h1>
+        <p class="subtitle">
+          Transform clinician discharge notes into patient-friendly instructions.
+        </p>
+        <form id="discharge-form">
+          <label>
+            Patient Age
+            <input id="patient_age" type="number" min="0" max="120" value="58" required />
+          </label>
+          <label>
+            Primary Diagnosis
+            <input id="primary_diagnosis" type="text" value="Acute heart failure exacerbation" required />
+          </label>
+          <label>
+            Comorbidities (comma-separated)
+            <input id="comorbidities" type="text" value="Hypertension, Type 2 diabetes" />
+          </label>
+          <label>
+            Discharge Summary
+            <textarea id="discharge_summary" rows="6" required>Admitted with shortness of breath and leg swelling. Improved with IV diuretics. Stable for discharge with oral medications and close outpatient follow-up.</textarea>
+          </label>
+          <label>
+            Medications (one per line: name|dose|frequency|purpose)
+            <textarea id="medications" rows="5">Furosemide|40 mg|once daily|fluid control
+Lisinopril|10 mg|once daily|blood pressure</textarea>
+          </label>
+          <label>
+            Follow-up Instructions (one per line)
+            <textarea id="follow_up">Cardiology clinic in 5 days
+Primary care follow-up in 7 days
+Daily morning weight check</textarea>
+          </label>
+          <label>
+            Red Flags (one per line)
+            <textarea id="red_flags">Chest pain
+Shortness of breath at rest
+Rapid weight gain (>2 kg in 48 hours)</textarea>
+          </label>
+          <label>
+            Target Language
+            <select id="target_language">
+              <option value="english">English</option>
+              <option value="spanish">Spanish</option>
+              <option value="hindi">Hindi</option>
+              <option value="telugu">Telugu</option>
+            </select>
+          </label>
+          <button type="submit" id="submit-btn">Generate Discharge Plan</button>
+        </form>
+      </section>
+
+      <section class="panel panel-output">
+        <h2>Patient-Facing Output</h2>
+        <div id="status" class="status">Ready</div>
+        <article>
+          <h3>Plain Language Summary</h3>
+          <p id="plain_summary"></p>
+        </article>
+        <article>
+          <h3>Translated Summary</h3>
+          <p id="translated_summary"></p>
+        </article>
+        <article>
+          <h3>Medication Schedule</h3>
+          <ul id="medication_schedule"></ul>
+        </article>
+        <article>
+          <h3>Red Flags</h3>
+          <ul id="red_flags_out"></ul>
+        </article>
+        <article>
+          <h3>Follow-up Plan</h3>
+          <ul id="follow_up_out"></ul>
+        </article>
+        <article>
+          <h3>Metadata</h3>
+          <pre id="metadata_out"></pre>
+        </article>
+      </section>
+    </main>
+
+    <script src="/demo-assets/app.js"></script>
+  </body>
+  </html>
+

@@ -1,0 +1,159 @@
+{
+  "version": "1.0",
+  "defaults": {
+    "approval_scope": "request_run",
+    "retry_strategy": {
+      "mode": "wait_then_retry",
+      "max_attempts": 2,
+      "backoff_seconds": [15, 30, 60]
+    },
+    "safety": {
+      "destructive": false,
+      "requires_admin": false
+    }
+  },
+  "rules": [
+    {
+      "id": "ec2_ssm_unmanaged",
+      "resource_type": "ec2",
+      "action": "deploy",
+      "error_match": {
+        "contains_any": [
+          "not managed by ssm",
+          "amazonssmmanagedinstancecore",
+          "ssm agent is running"
+        ]
+      },
+      "actions": [
+        {
+          "type": "ensure_ssm_prerequisites_for_instance",
+          "params": {
+            "instance_id": "{instance_id}",
+            "environment": "{environment}",
+            "wait_seconds": 300
+          }
+        }
+      ],
+      "required_permissions": [
+        "iam:PassRole",
+        "iam:AttachRolePolicy",
+        "iam:CreateRole",
+        "iam:CreateInstanceProfile",
+        "iam:AddRoleToInstanceProfile",
+        "ec2:AssociateIamInstanceProfile",
+        "ssm:DescribeInstanceInformation"
+      ],
+      "approval_message_template": "I can automatically enable Systems Manager access on instance {instance_id} by creating/reusing a managed role/profile and attaching it, then continue deployment.",
+      "human_actions": [
+        "Create or reuse managed SSM role/profile for this environment",
+        "Attach profile to the EC2 instance",
+        "Wait for SSM registration and retry deployment"
+      ]
+    },
+    {
+      "id": "rds_bastion_ssm_unmanaged",
+      "resource_type": "rds",
+      "error_match": {
+        "contains_any": [
+          "bastion instance is not ssm managed",
+          "attach amazonssmmanagedinstancecore role"
+        ]
+      },
+      "actions": [
+        {
+          "type": "ensure_ssm_prerequisites_for_instance",
+          "params": {
+            "instance_id": "{bastion_instance_id}",
+            "environment": "{environment}",
+            "wait_seconds": 300
+          }
+        }
+      ],
+      "required_permissions": [
+        "iam:PassRole",
+        "iam:AttachRolePolicy",
+        "ec2:AssociateIamInstanceProfile",
+        "ssm:DescribeInstanceInformation"
+      ],
+      "approval_message_template": "I can automatically enable SSM access on bastion instance {bastion_instance_id} and continue SQL execution.",
+      "human_actions": [
+        "Ensure bastion has managed SSM role/profile",
+        "Wait for registration",
+        "Retry SQL execution"
+      ]
+    },
+    {
+      "id": "eks_passrole_cross_account",
+      "resource_type": "eks",
+      "error_match": {
+        "contains_any": [
+          "cross-account pass role is not allowed",
+          "cannot pass role",
+          "passrole"
+        ]
+      },
+      "actions": [
+        {
+          "type": "ensure_eks_cluster_role",
+          "params": {
+            "environment": "{environment}",
+            "cluster_name": "{resource_name}"
+          }
+        }
+      ],
+      "required_permissions": [
+        "iam:CreateRole",
+        "iam:AttachRolePolicy",
+        "iam:PassRole",
+        "iam:GetRole",
+        "eks:CreateCluster"
+      ],
+      "approval_message_template": "I can create or repair the EKS cluster IAM role in this account and retry cluster provisioning automatically.",
+      "human_actions": [
+        "Create/reuse EKS cluster role in current account",
+        "Attach EKS managed policies",
+        "Retry cluster provisioning"
+      ]
+    },
+    {
+      "id": "generic_access_denied",
+      "resource_type": "*",
+      "error_match": {
+        "contains_any": [
+          "accessdenied",
+          "is not authorized to perform",
+          "explicit deny"
+        ]
+      },
+      "actions": [],
+      "required_permissions": [],
+      "approval_message_template": "Execution is blocked by current AWS permissions. I can pause and ask an admin to grant the missing permissions, then retry.",
+      "human_actions": [
+        "Collect missing permission details",
+        "Request admin approval",
+        "Retry after policy update"
+      ]
+    },
+    {
+      "id": "generic_network_dependency",
+      "resource_type": "*",
+      "error_match": {
+        "contains_any": [
+          "security group",
+          "subnet",
+          "vpc",
+          "route table",
+          "network"
+        ]
+      },
+      "actions": [],
+      "required_permissions": [],
+      "approval_message_template": "I detected a networking dependency issue. I can prepare a safe auto-fix plan for required network associations and retry.",
+      "human_actions": [
+        "Detect missing network prerequisites",
+        "Apply safe network association fixes",
+        "Retry provisioning"
+      ]
+    }
+  ]
+}

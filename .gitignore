@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+venv/
+.venv/
+backend/venv/
+
+# Node
+node_modules/
+frontend/node_modules/
+medgemma_challenge/deploy/node_modules/
+
+# Secrets / env
+.env
+*.pem
+*.key
+*.crt
+*.p12
+
+# Build / generated artifacts
+dist/
+build/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.zip
+*.tar.gz
+*.webm
+*.mp4
+
+# Terraform local state/cache
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

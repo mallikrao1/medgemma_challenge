@@ -1,0 +1,2 @@
+"""MedGemma challenge project package."""
+

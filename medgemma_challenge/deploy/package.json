@@ -1,0 +1,13 @@
+{
+  "name": "medgemma-challenge-deploy-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "record-demo": "node record_browser_demo.js"
+  },
+  "dependencies": {
+    "playwright": "^1.54.2"
+  }
+}
+

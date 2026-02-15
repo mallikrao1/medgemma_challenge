@@ -1,0 +1,33 @@
+{
+  "summary": {
+    "cases": 3,
+    "backend": "mock",
+    "red_flag_recall": 1.0,
+    "medication_fidelity": 1.0,
+    "avg_readability_flesch": 49.73,
+    "avg_generation_seconds": 0.0
+  },
+  "cases": [
+    {
+      "case_id": 1,
+      "backend": "mock",
+      "readability": 48.02,
+      "generation_seconds": 0.0,
+      "safety_warnings": []
+    },
+    {
+      "case_id": 2,
+      "backend": "mock",
+      "readability": 49.76,
+      "generation_seconds": 0.0,
+      "safety_warnings": []
+    },
+    {
+      "case_id": 3,
+      "backend": "mock",
+      "readability": 51.4,
+      "generation_seconds": 0.0,
+      "safety_warnings": []
+    }
+  ]
+}
